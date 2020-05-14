@@ -7,7 +7,6 @@ let longitude = 0;
 let map;
 let marker;
 
-
 form.onsubmit = function (e) {
   console.log(input.value)
   prefer(input.value, longitude, latitude)
@@ -20,23 +19,17 @@ listContainer.onclick = function (e) {
   if(e.target.tagName === `LI`) {
     longitude = e.target.closest(`.poi`).dataset.long;
     latitude = e.target.closest(`.poi`).dataset.lat;
-  //  mapboxgl.accessToken = apiKey;
-  //  let map = new mapboxgl.Map({
-  //    container: 'map', // container id
-  //    style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
-  //    center: [longitude, latitude], // starting position [lng, lat]
-  //    zoom: 11 // starting zoom
-  //  });
- 
+
+    map.flyTo({
+      center: [longitude,latitude],
+      essential: true // this animation is considered essential with respect to prefers-reduced-motion
+      });
+
     marker
      .setLngLat([longitude, latitude])
      .addTo(map);
  }
-
   }
-
-
-
 
 function prefer(input, longitude, latitude) {
   return fetch(`
@@ -45,7 +38,6 @@ function prefer(input, longitude, latitude) {
     .then(json => {
       return json.features;
     })
-
 }
 
 function preferList(json) {
@@ -65,19 +57,15 @@ json.forEach(element => {
 </li>
   `
 });
+
 listContainer.innerHTML = html;
-
 }
-
-
-
 
 navigator.geolocation.getCurrentPosition(success, error);
 
 function error() {
   status.textContent = 'Unable to retrieve your location';
 }
-
 
 function success(position) {
    latitude = position.coords.latitude;
@@ -96,7 +84,6 @@ function success(position) {
     .addTo(map);
 }
 
-
 function Rad(d){
   return d * Math.PI / 180.0;
 }
@@ -114,4 +101,3 @@ function GetDistance(lat1,lng1,lat2,lng2){
 
    return s;
 }
-
