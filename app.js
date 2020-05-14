@@ -4,6 +4,8 @@ const input = document.querySelector(`input`);
 const listContainer = document.querySelector(`.points-of-interest`)
 let latitude = 0;
 let longitude = 0;
+let map;
+let marker;
 
 
 form.onsubmit = function (e) {
@@ -14,12 +16,33 @@ form.onsubmit = function (e) {
   e.preventDefault();
 }
 
+listContainer.onclick = function (e) {
+  if(e.target.tagName === `LI`) {
+    longitude = e.target.closest(`.poi`).dataset.long;
+    latitude = e.target.closest(`.poi`).dataset.lat;
+  //  mapboxgl.accessToken = apiKey;
+  //  let map = new mapboxgl.Map({
+  //    container: 'map', // container id
+  //    style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+  //    center: [longitude, latitude], // starting position [lng, lat]
+  //    zoom: 11 // starting zoom
+  //  });
+ 
+    marker
+     .setLngLat([longitude, latitude])
+     .addTo(map);
+ }
+
+  }
+
+
+
+
 function prefer(input, longitude, latitude) {
   return fetch(`
   https://api.mapbox.com/geocoding/v5/mapbox.places/${input}.json?proximity=${longitude},${latitude}&access_token=${apiKey}&limit=10`)
     .then(res => res.json())
     .then(json => {
-      console.log(json);
       return json.features;
     })
 
@@ -61,14 +84,14 @@ function success(position) {
    longitude = position.coords.longitude;
 
   mapboxgl.accessToken = apiKey;
-  let map = new mapboxgl.Map({
+   map = new mapboxgl.Map({
     container: 'map', // container id
     style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
     center: [longitude, latitude], // starting position [lng, lat]
     zoom: 11 // starting zoom
   });
 
-  let marker = new mapboxgl.Marker()
+  marker = new mapboxgl.Marker()
     .setLngLat([longitude, latitude])
     .addTo(map);
 }
@@ -91,3 +114,4 @@ function GetDistance(lat1,lng1,lat2,lng2){
 
    return s;
 }
+
